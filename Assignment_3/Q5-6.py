@@ -1,7 +1,7 @@
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import MinMaxScaler
 import jax.numpy as jnp 
-from metrics import rmse
+from metrics import rmse, accuracy
 import numpy as np
 from NeuralNetworks.neural import NeuralNetworkMLPClassification, NeuralNetworkMLPRegression
 from sklearn.datasets import load_digits, load_boston
@@ -19,13 +19,13 @@ print("##### Accuracy training set on digits classifier")
 X = load_digits().data
 y = load_digits().target
 X = X.reshape(X.shape[0],-1)/255 # Normalize X
-y = oneHot(y, 10)
+y = oneHot(y,10)
 NN = NeuralNetworkMLPClassification(epoch=100,layerSize=[64,256,256,10],activationNames=["relu","relu","identity"])
 NN.fit(X,y)
 NN.predict(NN.layers,X)
 y = jnp.argmax(y, axis=1)
 y_hat = jnp.argmax(NN.predict(NN.layers, X), axis=1)
-print("Accuracy: "+str(jnp.sum(y_hat==y)/NN.samples))
+print("Accuracy: "+str(accuracy(y,y_hat)))
 
 print("##### Accuracy K=3 fold on digits classifier")
 acc=0
@@ -45,11 +45,24 @@ for train, test in k_fold.split(X):
     NN.fit(trainX,trainy)
     y_hat = NN.predict(NN.layers,testX)
     fold+=1
-    testy = jnp.argmax(testy, axis=1)
-    y_hat = jnp.argmax(NN.predict(NN.layers, testX), axis=1)
-    acc += jnp.sum(y_hat==testy)/NN.samples
+    testy = jnp.argmax(testy,axis=1)
+    y_hat = jnp.argmax(NN.predict(NN.layers,testX),axis=1)
+    acc += accuracy(testy,y_hat)
     
 print("Average accuracy: "+str(acc/3))
+
+print("##### rmse on training set on boston data regressor")
+
+data = load_boston()
+scaler = MinMaxScaler()
+X = data.data
+scaler.fit(X)
+X = scaler.transform(X)
+y = data.target
+NN = NeuralNetworkMLPRegression(epoch=1000,lr=0.001,layerSize=[13,256,128,64,32,1],activationNames=["sigmoid","sigmoid","sigmoid","sigmoid","identity"])
+NN.fit(X,y)
+print(rmse(NN.predict(X),y))
+
 
 print("##### rmse on training set on boston data regressor")
 

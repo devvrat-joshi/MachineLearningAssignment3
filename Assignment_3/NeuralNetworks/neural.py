@@ -161,8 +161,8 @@ class NeuralNetworkMLPRegression:
             layers: weights 
         """
         y = self.batch_[1].reshape(-1)
-        pred = self.predict(self.batch_[0])
         self.layers = layers
+        pred = self.predict(self.batch_[0])
         return jnp.sum((y-pred)**2)/self.batch_[0].shape[0]
   
     @partial(jit,static_argnums=(0))
