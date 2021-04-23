@@ -15,7 +15,6 @@
 ## Space Complexity
 ### Training
 - ```O(M*N+M*K+N*K)```if we count input also into the space complexity.
-- Else the input matrix we can remove from the space
 - Whereas if we not count the space used by input, then only the space taken by multiplication of input with parameters is space complexity. ``` O(N*K+M*K) ```
 ### Prediction
 - ```O(M*N+M*K+N*K)```if we count input also into the space complexity.
