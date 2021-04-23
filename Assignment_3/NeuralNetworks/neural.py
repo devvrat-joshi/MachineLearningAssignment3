@@ -48,8 +48,8 @@ class NeuralNetworkMLPClassification:
         """
         for epoch in range(self.epoch):
             print("\rEpoches Completed: "+str(epoch+1),end="")
-            for _ in range(0,self.samples,self.batch):
-                self.layers = self.sgd(self.layers,(self.X[_:_+self.batch,:],self.y[_:_+self.batch,:]))
+            for i in range(0,self.samples,self.batch):
+                self.layers = self.sgd(self.layers,(self.X[i:i+self.batch,:],self.y[i:i+self.batch,:]))
         print()
 
     def loss(self,layers):
@@ -161,8 +161,8 @@ class NeuralNetworkMLPRegression:
             layers: weights 
         """
         y = self.batch_[1].reshape(-1)
-        self.layers = layers
         pred = self.predict(self.batch_[0])
+        self.layers = layers
         return jnp.sum((y-pred)**2)/self.batch_[0].shape[0]
   
     @partial(jit,static_argnums=(0))
