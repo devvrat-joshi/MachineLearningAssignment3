@@ -1,11 +1,8 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from LogisticRegression.logistic import LogisticRegression
 from metrics import *
 from sklearn.preprocessing import MinMaxScaler         
 from sklearn.model_selection import KFold
-scaler = MinMaxScaler()
 np.random.seed(42)
 
 from sklearn.datasets import load_breast_cancer
@@ -15,7 +12,7 @@ y = load_breast_cancer().target
 scalar = MinMaxScaler()
 scalar.fit(X)
 X = scalar.transform(X)
-
+print(load_breast_cancer().keys())
 print("######### Q2 Part A")
 print('##### Autograd L1 Regularized')
 LR = LogisticRegression(lr = 0.1, epoch = 100, regularization='L1',lbda=0.01)
@@ -48,6 +45,7 @@ print("Nested Cross Validation with L1 regularization")
 acc=0
 fold = 1
 X = np.append(X, np.matrix(y).T, axis=1)
+ft = load_breast_cancer().feature_names
 k_fold = KFold(3)
 for train, test in k_fold.split(X):
     train_all = X[train]
@@ -59,7 +57,7 @@ for train, test in k_fold.split(X):
     trainX = np.append(trainX, np.matrix(trainy).T, axis=1)
     val_fold = KFold(3, shuffle=True, random_state=1)
     forthisFoldBestModel = []
-    accuracies_average = []
+    averageAccuracy = []
     for hyperparameter in range(1,10):
         acc = 0
         maxAccuracy = 0
@@ -78,12 +76,19 @@ for train, test in k_fold.split(X):
             if maxAccuracy<ac:
                 maxAccuracy = ac
                 bestmodel = LR.coef_
-        accuracies_average.append(acc/3)
+        averageAccuracy.append(acc/3)
         forthisFoldBestModel.append(bestmodel)
-    ind = accuracies_average.index(max(accuracies_average))
+    ind = averageAccuracy.index(max(averageAccuracy))
     print("Fold {} Best Lambda: ".format(fold)+str((ind+1)/100))
     fold+=1
     coef = forthisFoldBestModel[ind]
+    bestFeatures = sorted([(x,i) for i,x in enumerate(coef)])
+    features = []
+    for best in bestFeatures[-3:]:
+        features.append(ft[best[1]])
+    print("Best Features: ",features)
+        
+        
     yhat = predict(testX,coef)
     print(accuracy(yhat,testy))
 
@@ -101,7 +106,7 @@ for train, test in k_fold.split(X):
     trainX = np.append(trainX, np.matrix(trainy).T, axis=1)
     val_fold = KFold(3, shuffle=True, random_state=1)
     forthisFoldBestModel = []
-    accuracies_average = []
+    averageAccuracy = []
     for hyperparameter in range(1,10):
         acc = 0
         maxAccuracy = 0
@@ -120,9 +125,9 @@ for train, test in k_fold.split(X):
             if maxAccuracy<ac:
                 maxAccuracy = ac
                 bestmodel = LR.coef_
-        accuracies_average.append(acc/3)
+        averageAccuracy.append(acc/3)
         forthisFoldBestModel.append(bestmodel)
-    ind = accuracies_average.index(max(accuracies_average))
+    ind = averageAccuracy.index(max(averageAccuracy))
     print("Fold {} Best Lambda: ".format(fold)+str((ind+1)/100))
     fold+=1
     coef = forthisFoldBestModel[ind]

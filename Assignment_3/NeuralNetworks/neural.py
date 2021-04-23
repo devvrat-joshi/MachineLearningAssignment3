@@ -57,15 +57,17 @@ class NeuralNetworkMLPClassification:
             cross entropy multiclass loss function
             layers: weights 
         """
-        pred = self.predict(layers, self.batch_[0])
-        return -jnp.mean(jnp.sum(pred*self.batch_[1], axis=1))
+        pred = self.predict(layers,self.batch_[0])
+        return -jnp.mean(jnp.sum(pred*self.batch_[1],axis=1))
     
-    @partial(jit,static_argnums=(0,))
+    @partial(jit,static_argnums=(0))
     def sgd(self,layers,batch):
         """
             stochastic gradient descent
             layers: weights
             batch: current batch
+            since layers are parameters with respect to which gradient is computer
+            ->object attribute (self.layers) is avoided
         """
         self.batch_ = batch
         grads = grad(self.loss)(layers)
@@ -163,12 +165,14 @@ class NeuralNetworkMLPRegression:
         pred = self.predict(self.batch_[0])
         return jnp.sum((y-pred)**2)/self.batch_[0].shape[0]
   
-    @partial(jit,static_argnums=(0,))
+    @partial(jit,static_argnums=(0))
     def sgd(self,layers,batch):
         """
             stochastic gradient descent
             layers: weights
             batch: current batch
+            since layers are parameters with respect to which gradient is computer
+            ->object attribute (self.layers) is avoided
         """
         self.batch_ = batch
         grads = grad(self.loss)(layers)
@@ -179,11 +183,11 @@ class NeuralNetworkMLPRegression:
   
     def predict(self, X):
         """
-        Forward Pass
+            Forward Pass
         """
         input_ = X
-        for i,(w, b) in enumerate(self.layers):
-            input_ = self.activationFuncs[i](jnp.dot(input_, w.T)+b)
+        for i in range(len(self.layers)):
+            input_ = self.activationFuncs[i](jnp.dot(input_, self.layers[i][0].T)+self.layers[i][1])
         return input_.reshape(-1)
   
     def relu(self,inp):
@@ -194,4 +198,3 @@ class NeuralNetworkMLPRegression:
   
     def identity(self,inp):
         return inp
-  

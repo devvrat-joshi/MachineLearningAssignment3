@@ -13,12 +13,11 @@ X = data.data
 y = data.target
 scalar = MinMaxScaler()
 scalar.fit(X)
-
 X = scalar.transform(X)
+
 print("######### Q1 Part A")
 LR = LogisticRegression(lr=0.1,epoch=1000)
 LR.fit(X,y)
-ans = 0
 y_hat = LR.predict(X)
 print("Accuracy: ",end = "")
 print(accuracy(y_hat,y))
@@ -26,7 +25,6 @@ print(accuracy(y_hat,y))
 print("######### Q1 Part B")
 LR = LogisticRegression(lr=0.1,epoch=1000)
 LR.fit_autograd(X,y)
-ans = 0
 y_hat = LR.predict(X)
 print("Accuracy: ",end = "")
 print(accuracy(y_hat,y))
@@ -54,13 +52,13 @@ print("K=3 Average Accuracy: ",end = "")
 print(acc/3)
 
 print("######### Q1 Part D")
-print("See Plot")
+print("See Plot at plotQ1.png")
 X = load_breast_cancer().data
-features = [12,14]
+features = [12,14] # Because decision boundary much more well defined for these 2 features
 X = X[:,features]
 scalar = MinMaxScaler()
 scalar.fit(X)
 X = scalar.transform(X)
 LR = LogisticRegression(lr=0.1,epoch=100)
 LR.fit(X,y)
-LR.plot_decision_boundary(X,y)
+LR.plot(X,y)
