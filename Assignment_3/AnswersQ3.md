@@ -1,10 +1,10 @@
 ### Q3 Part A
-Accuracy: 0.905954368391764
+#### Accuracy: 0.905954368391764
 ### Q3 Part B
-autograd slow: epoch = 99
-Accuracy: 0.9015025041736227
+#### autograd slow: epoch = 99
+#### Accuracy: 0.9015025041736227
 ### Q3 Part C
-Average accuracy: 0.8975996040584013
+#### Average accuracy: 0.8975996040584013
 #### From the Confusion Matrix
 plot
 
